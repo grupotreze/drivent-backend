@@ -17,15 +17,24 @@ async function main() {
     });
   }
   await prisma.ticketType.deleteMany({})
+  
+  await prisma.ticketType.create({
+    data: {
+      name: "Presencial",
+      price: faker.datatype.number(),
+      isRemote: false,
+      includesHotel: true,
+    },
+  });
 
-    await prisma.ticketType.create({
-      data: {
-        name: "Presencial",
-        price: faker.datatype.number(),
-        isRemote: false,
-        includesHotel: true,
-      },
-    });
+  await prisma.ticketType.create({
+    data: {
+      name: "Presencial",
+      price: faker.datatype.number(),
+      isRemote: false,
+      includesHotel: false,
+    },
+  });
   
     await prisma.ticketType.create({
       data: {
