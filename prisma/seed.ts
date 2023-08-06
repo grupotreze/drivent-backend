@@ -21,7 +21,7 @@ async function main() {
   await prisma.ticketType.create({
     data: {
       name: "Presencial",
-      price: faker.datatype.number(),
+      price: 25000,
       isRemote: false,
       includesHotel: true,
     },
@@ -30,7 +30,7 @@ async function main() {
   await prisma.ticketType.create({
     data: {
       name: "Presencial",
-      price: faker.datatype.number(),
+      price: 25000,
       isRemote: false,
       includesHotel: false,
     },
@@ -39,7 +39,7 @@ async function main() {
     await prisma.ticketType.create({
       data: {
         name: "Online",
-        price: faker.datatype.number(),
+        price: 10000,
         isRemote: true,
         includesHotel: false,
       },
