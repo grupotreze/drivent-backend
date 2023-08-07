@@ -19,6 +19,7 @@ import {
   createRoomWithHotelId,
 } from "../factories";
 import { cleanDb, generateValidToken } from "../helpers";
+import redis from "@/config/redis";
 
 beforeAll(async () => {
   await init();
@@ -26,6 +27,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await cleanDb();
+  await redis.flushAll();
 });
 
 const server = supertest(app);
@@ -100,7 +102,8 @@ describe("GET /hotels", () => {
           name: createdHotel.name,
           image: createdHotel.image,
           createdAt: createdHotel.createdAt.toISOString(),
-          updatedAt: createdHotel.updatedAt.toISOString()
+          updatedAt: createdHotel.updatedAt.toISOString(),
+          Rooms: expect.any(Array)
         }
       ]);
     });
