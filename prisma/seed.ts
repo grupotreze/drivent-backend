@@ -45,7 +45,7 @@ async function main() {
       },
     });
 
-    await prisma.hotel.deleteMany({});
+    // await prisma.hotel.deleteMany({});
     
     console.log('Creating hotels...\n');
     
