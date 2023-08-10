@@ -39,6 +39,7 @@ model Event {
   endsAt             DateTime
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+  Auditorium Auditorium[]
 }
 
 model Enrollment {
@@ -53,6 +54,7 @@ model Enrollment {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   Ticket    Ticket[]
+  Activity  Activity[]
 }
 
 model Address {
@@ -137,4 +139,26 @@ model Booking {
   roomId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Auditorium{
+  id Int @id @default(autoincrement())
+  name String
+  Event Event[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+  Activity Activity[]
+}
+
+model Activity {
+  id Int @id @default(autoincrement())
+  name String
+  Auditorium Auditorium @relation(fields: [auditoriumId],references: [id])
+  auditoriumId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+  startTime DateTime
+  endTime   DateTime
+  capacity Int @default(20)
+  Enrollment Enrollment[]
 }
