@@ -73,6 +73,7 @@ describe("GET /enrollments", () => {
           neighborhood: enrollment.Address[0].neighborhood,
           addressDetail: enrollment.Address[0].addressDetail,
         },
+        Activity: []
       });
     });
   });

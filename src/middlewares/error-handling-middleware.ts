@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import httpStatus from "http-status";
 
 export function handleApplicationErrors(err: ApplicationError | Error, _req: Request, res: Response) {
-  console.log({ err, banana: "oi" });
+  console.error({ err });
   if (err.name === "CannotEnrollBeforeStartDateError") {
     return res.status(httpStatus.BAD_REQUEST).send({
       message: err.message,

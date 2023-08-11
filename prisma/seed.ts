@@ -16,7 +16,7 @@ const prisma = new PrismaClient();
   await prisma.room.deleteMany({});
   await prisma.activity.deleteMany({});
   await prisma.auditorium.deleteMany({});
-  // await prisma.hotel.deleteMany({});
+  await prisma.hotel.deleteMany({});
 })();
 
 async function main() {

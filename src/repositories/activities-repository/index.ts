@@ -1,15 +1,19 @@
 import { prisma } from "@/config";
 
 async function getEnrolledActivites(id: number) {
-  return await prisma.activity.count({
+  const enrolledCount = await prisma.enrollment.count({
     where: {
-      id: id,
-      Enrollment: {
-        some: {}
+      Activity: {
+        some: {
+          id: id
+        }
       }
     }
   });
+
+  return enrolledCount;
 }
+
 async function enrollActivity(userId: number, activityId: number) {
   return await prisma.enrollment.update({
     data: {
@@ -30,9 +34,35 @@ async function unenrollActivity(activityId: number, enrollmentId: number ) {
     DELETE FROM "_ActivityToEnrollment" WHERE "A" = ${activityId} AND "B" = ${enrollmentId}
   `;
 }
+
+async function getActivityById(id: number) {
+  return await prisma.activity.findUnique({
+    where: {
+      id
+    }
+  });
+}
+
+async function getOnEnrolledActivity(userId: number, activityId: number) {
+  return prisma.activity.findUnique({
+    where: {
+      id: activityId
+    },
+    include: {
+      Enrollment: {
+        where: {
+          userId
+        }
+      }
+    }
+  });
+}
+
 const activitiesRepository = {
   getEnrolledActivites,
   enrollActivity,
-  unenrollActivity
+  unenrollActivity,
+  getActivityById,
+  getOnEnrolledActivity
 };
 export default activitiesRepository;
