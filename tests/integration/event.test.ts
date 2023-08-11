@@ -4,6 +4,7 @@ import supertest from "supertest";
 import { createEvent } from "../factories";
 import { cleanDb } from "../helpers";
 import redis from "@/config/redis";
+import generateAuditoriums from "../factories/auditorium-factory";
 
 beforeAll(async () => {
   await init();
@@ -25,6 +26,8 @@ describe("GET /event", () => {
   it("should respond with status 200 and event data if there is an event", async () => {
     const event = await createEvent();
 
+    for(let i = 0; i < 3; i ++) await generateAuditoriums(event.id);
+
     const response = await server.get("/event");
 
     expect(response.status).toBe(httpStatus.OK);
@@ -35,6 +38,15 @@ describe("GET /event", () => {
       logoImageUrl: event.logoImageUrl,
       startsAt: event.startsAt.toISOString(),
       endsAt: event.endsAt.toISOString(),
+      Auditorium: expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(Number),
+          name: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          Activity: []
+        })
+      ])
     });
   });
 });

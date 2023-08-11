@@ -21,6 +21,10 @@ beforeEach(async () => {
   await redis.flushAll();
 });
 
+beforeEach(async () => {
+  await redis.flushAll();
+});
+
 const server = supertest(app);
 
 describe("POST /users", () => {
