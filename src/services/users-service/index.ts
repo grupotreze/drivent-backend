@@ -24,6 +24,10 @@ async function validateUniqueEmailOrFail(email: string) {
   }
 }
 
+async function verifyUniqueEmail(email: string) {
+  return await userRepository.findByEmail(email);
+}
+
 async function canEnrollOrFail() {
   const canEnroll = await eventsService.isCurrentEventActive();
   if (!canEnroll) {
@@ -34,7 +38,7 @@ async function canEnrollOrFail() {
 export type CreateUserParams = Pick<User, "email" | "password">;
 
 const userService = {
-  createUser,
+  createUser, verifyUniqueEmail
 };
 
 export * from "./errors";
