@@ -48,22 +48,14 @@ async function oauthLogin(code: string) {
     }
   });
 
-  const GITHUB_NAME= "https://api.github.com/user";
-  const responseName = await axios.get(GITHUB_NAME, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-
   const emailExists = await userService.verifyUniqueEmail(responseEmail.data[0].email);
-  
+
   if (emailExists) {
     const user = await getUserOrFail(responseEmail.data[0].email);
     const tokenJWT = await createSession(user.id);
     return {
       user: exclude(user, "password"),
-      token: tokenJWT,
-      name: responseName.data.name
+      token: tokenJWT
     };
   } else {
     const createUser = await userService.createUser({ email: responseEmail.data[0].email, password: String(uuid()) });
@@ -72,8 +64,7 @@ async function oauthLogin(code: string) {
     const tokenJWT = await createSession(user.id);
     return {    
       user: { id: user.id, email: user.email },
-      token: tokenJWT,
-      name: responseName.data.name
+      token: tokenJWT
     };
   }
 }
