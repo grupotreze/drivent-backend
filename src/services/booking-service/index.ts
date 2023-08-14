@@ -3,6 +3,7 @@ import roomRepository from "@/repositories/room-repository";
 import bookingRepository from "@/repositories/booking-repository";
 import enrollmentRepository from "@/repositories/enrollment-repository";
 import tikectRepository from "@/repositories/ticket-repository";
+import redis from "@/config/redis";
 
 async function checkEnrollmentTicket(userId: number) {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
@@ -41,6 +42,9 @@ async function bookingRoomById(userId: number, roomId: number) {
   await checkEnrollmentTicket(userId);
   await checkValidBooking(roomId);
 
+  const cacheKey = `getHotels${userId}`;
+  redis.del(cacheKey);
+
   return bookingRepository.create({ roomId, userId });
 }
 
@@ -52,11 +56,16 @@ async function changeBookingRoomById(userId: number, roomId: number) {
     throw cannotBookingError();
   }
 
-  return bookingRepository.upsertBooking({
+  const updatedBooking = bookingRepository.upsertBooking({
     id: booking.id,
     roomId,
     userId
   });
+
+  const cacheKey = `getHotels${userId}`;
+  redis.del(cacheKey);
+
+  return updatedBooking;
 }
 
 const bookingService = {
