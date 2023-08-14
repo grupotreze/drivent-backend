@@ -1,11 +1,12 @@
-import { AddressEnrollment } from "@/protocols";
+import { AddressEnrollment, TransactionType } from "@/protocols";
 import { getAddress } from "@/utils/cep-service";
 import { notFoundError } from "@/errors";
 import addressRepository, { CreateAddressParams } from "@/repositories/address-repository";
 import enrollmentRepository, { CreateEnrollmentParams } from "@/repositories/enrollment-repository";
 import { exclude } from "@/utils/prisma-utils";
+// eslint-disable-next-line boundaries/element-types
+import { prisma } from "@/config";
 import { Address, Enrollment } from "@prisma/client";
-
 async function getAddressFromCEP(cep: string): Promise<AddressEnrollment> {
   const result = await getAddress(cep);
 
@@ -55,7 +56,6 @@ function getFirstAddress(firstAddress: Address): GetAddressResult {
 }
 
 type GetAddressResult = Omit<Address, "createdAt" | "updatedAt" | "enrollmentId">;
-
 async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
   const enrollment = exclude(params, "address");
   const address = getAddressForUpsert(params.address);
@@ -66,10 +66,16 @@ async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollm
   if (result.error) {
     throw notFoundError();
   }
+  try {
+    await prisma.$transaction(async (tx: TransactionType): any => {
+      const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, "userId"), tx);
 
-  const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, "userId"));
-
-  await addressRepository.upsert(newEnrollment.id, address, address);
+      await addressRepository.upsert(newEnrollment.id, address, address, tx);
+    });
+  }
+  catch (error) {
+    return error;
+  }
 }
 
 function getAddressForUpsert(address: CreateAddressParams) {
