@@ -1,3 +1,5 @@
+import { Prisma, PrismaClient } from "@prisma/client";
+
 export type ApplicationError = {
   name: string;
   message: string;
@@ -30,3 +32,5 @@ export type RequestError = {
   name: string,
   message: string,
 };
+
+export type TransactionType = Omit<PrismaClient<Prisma.PrismaClientOptions, never>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">;

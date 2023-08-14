@@ -17,7 +17,6 @@ async function createPayment(ticketId: number, params: PaymentParams) {
     }
   });
 }
-
 export type PaymentParams = Omit<Payment, "id" | "createdAt" | "updatedAt">
 
 const paymentRepository = {

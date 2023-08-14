@@ -1,4 +1,5 @@
 import { prisma } from "@/config";
+import { TransactionType } from "@/protocols";
 import { Enrollment } from "@prisma/client";
 
 async function findWithAddressByUserId(userId: number) {
@@ -21,8 +22,9 @@ async function upsert(
   userId: number,
   createdEnrollment: CreateEnrollmentParams,
   updatedEnrollment: UpdateEnrollmentParams,
+  tx: TransactionType,
 ) {
-  return prisma.enrollment.upsert({
+  return tx.enrollment.upsert({
     where: {
       userId,
     },
