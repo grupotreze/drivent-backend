@@ -6,7 +6,7 @@ import enrollmentRepository, { CreateEnrollmentParams } from "@/repositories/enr
 import { exclude } from "@/utils/prisma-utils";
 // eslint-disable-next-line boundaries/element-types
 import { prisma } from "@/config";
-import { Address, Enrollment } from "@prisma/client";
+import { Address, Enrollment, Prisma } from "@prisma/client";
 async function getAddressFromCEP(cep: string): Promise<AddressEnrollment> {
   const result = await getAddress(cep);
 
@@ -67,7 +67,7 @@ async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollm
     throw notFoundError();
   }
   try {
-    await prisma.$transaction(async (tx: TransactionType): any => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, "userId"), tx);
 
       await addressRepository.upsert(newEnrollment.id, address, address, tx);
